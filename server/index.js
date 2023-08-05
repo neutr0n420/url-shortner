@@ -1,51 +1,27 @@
-const express = require('express')
-// import { nanoid } from 'nanoid'
-const connectClient = require('redis')
-
+import express, { request, response } from "express"
+import genrateRandomString from "./utils/randomString.js"
+import { createClient } from 'redis';
 const app = express()
 
-const PORT = 6969
 
+const PORT =6969
 app.use(express.json())
+app.get('/',(request, response)=>{
 
-
-// const nanoId = nanoid()
-
-// app.get('/', (request, response)=>{
-    
-// })
-
-//adding this to new file the below function should be in "./utils/generatePassword"
-
-const string = ["a", "b", "c", "d", "e", "f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u", "v", "w", "x","y", "z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
-const genrateRandomString = (length) =>{
-    let string1 = ""
-    // This for loop should do is genrate any random number which we can pick form the above given arrey of stirng
-    for(let i = 0; i< length; i++){
-        let number = Math.floor(Math.random()*52);
-         let char = string[number]
-         string1 = string1 + char
-     }
-     console.log(string1)
-return string1
-}
-
-//initlizing the Redis client
-// const client = createClient()
-const client = connectClient.createClient()
-
-
-app.get('/healthcheck', (request, response)=>{
-    response.status(200).send("server is running ok ok")
+    response.status(200).send("Server is running fine")
 })
-
-
-app.post('/api/shortenurl',(request, resposne)=>{
-    let input = request.body
-    console.log(input)
+app.post('/api/shortenurl', async (request, response)=>{
+    const input = request.body
     console.log(genrateRandomString(5))
-    resposne.status(200).send(JSON.stringify(input))
+    const client = createClient({
+        url: 'redis-18082.c93.us-east-1-3.ec2.cloud.redislabs.com:18082',
+      });
+      
+      client.on('error', err => console.log('Redis Client Error', err));
+      
+      await client.connect();
+      
+    response.status(200).send(value)
 })
 
-
-app.listen(PORT, console.log(`App is running on ${PORT} port `))
+app.listen(PORT, console.log(`App is listning on http://localhost:${PORT}`))
