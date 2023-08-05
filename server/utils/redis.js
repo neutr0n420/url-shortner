@@ -1,14 +1,13 @@
-import {createClient} from "redis"
+import {createClient} from "redis";
 
- const CreateClient = () =>{
+const CreateClient = () =>{
     const client = createClient({
-        username:'default',
+        url: process.env.REDIS_HOST,
         password: process.env.REDIS_PASSWORD,
-        socket:{
-            host: process.env.REDIS_HOST,
-            port: 18082,
-        }
     })
+    client.on("error", (err)=> console.log("Redis Client Error", err))
+    client.connect() 
     return client
 }
+
 export default CreateClient
